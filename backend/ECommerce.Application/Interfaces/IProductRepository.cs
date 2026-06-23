@@ -9,8 +9,8 @@ namespace ECommerce.Application.Interfaces;
     {
         Task<List<Product>> GetAllActiveAsync();
         Task<Product?> GetActiveByIdAsync(int id);
-    }
-    // Used to look up the authentic master price and stock from the warehouse
+
+       // Used to look up the authentic master price and stock from the warehouse
     Task<Product?> GetByIdAsync(int id);
 
     // Used to update stock numbers later if necessary
