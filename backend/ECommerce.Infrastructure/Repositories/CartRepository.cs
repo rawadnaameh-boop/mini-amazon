@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
+using ECommerce.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Infrastructure.Repositories;
 
 public class CartRepository : ICartRepository
 {
-    // NOTE: Replace 'AppDbContext' with whatever your teammate named their DbContext file!
     private readonly AppDbContext _context;
 
     public CartRepository(AppDbContext context)

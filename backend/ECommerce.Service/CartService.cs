@@ -103,7 +103,48 @@ public class CartService : ICartService
         return response;
     }
 
-    // Stub placeholders for Update and Remove to satisfy ICartService contract
-    public Task<CartResponseDto> UpdateItemQuantityAsync(int userId, UpdateCartItemDto dto) => throw new NotImplementedException();
-    public Task<CartResponseDto> RemoveItemFromCartAsync(int userId, int productId) => throw new NotImplementedException();
+    public async Task<CartResponseDto> UpdateItemQuantityAsync(int userId, UpdateCartItemDto dto)
+    {
+        var cart = await _cartRepository.GetByUserIdAsync(userId)
+            ?? throw new Exception("Cart not found.");
+
+        var existingItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == dto.ProductId)
+            ?? throw new Exception("Item not found in cart.");
+
+        if (dto.Quantity <= 0)
+        {
+            cart.CartItems.Remove(existingItem);
+        }
+        else
+        {
+            var product = await _productRepository.GetByIdAsync(dto.ProductId)
+                ?? throw new Exception("Product not found.");
+
+            // CRUCIAL BUSINESS LOGIC: Intercept and reject if stock is insufficient
+            if (dto.Quantity > product.StockQuantity)
+            {
+                throw new InvalidOperationException("ITEM_SOLD_OUT");
+            }
+
+            existingItem.Quantity = dto.Quantity;
+        }
+
+        await _cartRepository.SaveChangesAsync();
+        return MapToResponseDto(cart);
+    }
+
+    public async Task<CartResponseDto> RemoveItemFromCartAsync(int userId, int productId)
+    {
+        var cart = await _cartRepository.GetByUserIdAsync(userId)
+            ?? throw new Exception("Cart not found.");
+
+        var existingItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+        if (existingItem != null)
+        {
+            cart.CartItems.Remove(existingItem);
+            await _cartRepository.SaveChangesAsync();
+        }
+
+        return MapToResponseDto(cart);
+    }
 }

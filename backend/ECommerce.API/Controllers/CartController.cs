@@ -48,4 +48,40 @@ public class CartController : ControllerBase
             return StatusCode(500, new { error = ex.Message });
         }
     }
+
+    // 3. PUT: api/cart/items?userId=1
+    // Used when a user changes the quantity via the [+]/[-] controls
+    [HttpPut("items")]
+    public async Task<IActionResult> UpdateItem([FromQuery] int userId, [FromBody] UpdateCartItemDto dto)
+    {
+        try
+        {
+            var updatedCart = await _cartService.UpdateItemQuantityAsync(userId, dto);
+            return Ok(updatedCart);
+        }
+        catch (InvalidOperationException ex) when (ex.Message == "ITEM_SOLD_OUT")
+        {
+            return BadRequest(new { error = "ITEM_SOLD_OUT" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    }
+
+    // 4. DELETE: api/cart/items/5?userId=1
+    // Used when a user clicks "Remove"
+    [HttpDelete("items/{productId:int}")]
+    public async Task<IActionResult> RemoveItem([FromQuery] int userId, int productId)
+    {
+        try
+        {
+            var updatedCart = await _cartService.RemoveItemFromCartAsync(userId, productId);
+            return Ok(updatedCart);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    }
 }

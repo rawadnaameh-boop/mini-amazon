@@ -14,6 +14,6 @@ public class OrderResultDto
     public int OrderId { get; set; }
     public DateTime CreateAtUtc { get; set; }
     public decimal TotalAmount { get; set; }
-    public List<OrderItemResultDto> Items { get; set; }
+    public List<OrderItemResultDto> Items { get; set; } = new();
 
 }
