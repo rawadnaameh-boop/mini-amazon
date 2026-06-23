@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ECommerce.Domain.Entities;
+﻿namespace ECommerce.Domain.Entities;
 
 	public class Product
 	{
