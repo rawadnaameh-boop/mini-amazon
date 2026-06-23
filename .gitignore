@@ -2,11 +2,15 @@
 .vs/
 **/.vs/
 
-# .NET build folders
+# .NET build output
 bin/
 obj/
 **/bin/
 **/obj/
+[Bb]in/
+[Oo]bj/
+**/[Bb]in/
+**/[Oo]bj/
 
 # User-specific Visual Studio files
 *.user

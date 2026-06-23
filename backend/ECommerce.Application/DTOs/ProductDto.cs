@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ECommerce.Application.Dtos;
+namespace ECommerce.Application.DTOs;
 
 public class ProductDto()
 {public int Id { get; set; }
