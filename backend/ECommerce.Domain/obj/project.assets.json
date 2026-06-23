@@ -8,23 +8,23 @@
     "net10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Rita Abou Fares\\.nuget\\packages\\": {},
+    "C:\\Users\\Rawad Naameh\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Rita Abou Fares\\source\\repos\\mini-amazon\\backend\\ECommerce.Domain\\ECommerce.Domain.csproj",
+      "projectUniqueName": "C:\\Users\\rawad naameh\\source\\repos\\mini-amazon\\backend\\ECommerce.Domain\\ECommerce.Domain.csproj",
       "projectName": "ECommerce.Domain",
-      "projectPath": "C:\\Users\\Rita Abou Fares\\source\\repos\\mini-amazon\\backend\\ECommerce.Domain\\ECommerce.Domain.csproj",
-      "packagesPath": "C:\\Users\\Rita Abou Fares\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Rita Abou Fares\\source\\repos\\mini-amazon\\backend\\ECommerce.Domain\\obj\\",
+      "projectPath": "C:\\Users\\rawad naameh\\source\\repos\\mini-amazon\\backend\\ECommerce.Domain\\ECommerce.Domain.csproj",
+      "packagesPath": "C:\\Users\\Rawad Naameh\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\rawad naameh\\source\\repos\\mini-amazon\\backend\\ECommerce.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Rita Abou Fares\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Rawad Naameh\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

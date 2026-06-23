@@ -1,30 +1,68 @@
 {
   "version": 4,
   "targets": {
-    "net10.0": {}
+    "net10.0": {
+      "ECommerce.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "ECommerce.Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ECommerce.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ECommerce.Application.dll": {}
+        }
+      },
+      "ECommerce.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ECommerce.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ECommerce.Domain.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "ECommerce.Application/1.0.0": {
+      "type": "project",
+      "path": "../ECommerce.Application/ECommerce.Application.csproj",
+      "msbuildProject": "../ECommerce.Application/ECommerce.Application.csproj"
+    },
+    "ECommerce.Domain/1.0.0": {
+      "type": "project",
+      "path": "../ECommerce.Domain/ECommerce.Domain.csproj",
+      "msbuildProject": "../ECommerce.Domain/ECommerce.Domain.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net10.0": []
+    "net10.0": [
+      "ECommerce.Application >= 1.0.0",
+      "ECommerce.Domain >= 1.0.0"
+    ]
   },
   "packageFolders": {
-    "C:\\Users\\Rita Abou Fares\\.nuget\\packages\\": {},
+    "C:\\Users\\Rawad Naameh\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Rita Abou Fares\\source\\repos\\mini-amazon\\backend\\ECommerce.Service\\ECommerce.Service.csproj",
+      "projectUniqueName": "C:\\Users\\rawad naameh\\source\\repos\\mini-amazon\\backend\\ECommerce.Service\\ECommerce.Service.csproj",
       "projectName": "ECommerce.Service",
-      "projectPath": "C:\\Users\\Rita Abou Fares\\source\\repos\\mini-amazon\\backend\\ECommerce.Service\\ECommerce.Service.csproj",
-      "packagesPath": "C:\\Users\\Rita Abou Fares\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Rita Abou Fares\\source\\repos\\mini-amazon\\backend\\ECommerce.Service\\obj\\",
+      "projectPath": "C:\\Users\\rawad naameh\\source\\repos\\mini-amazon\\backend\\ECommerce.Service\\ECommerce.Service.csproj",
+      "packagesPath": "C:\\Users\\Rawad Naameh\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\rawad naameh\\source\\repos\\mini-amazon\\backend\\ECommerce.Service\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Rita Abou Fares\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Rawad Naameh\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -39,7 +77,14 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\rawad naameh\\source\\repos\\mini-amazon\\backend\\ECommerce.Application\\ECommerce.Application.csproj": {
+              "projectPath": "C:\\Users\\rawad naameh\\source\\repos\\mini-amazon\\backend\\ECommerce.Application\\ECommerce.Application.csproj"
+            },
+            "C:\\Users\\rawad naameh\\source\\repos\\mini-amazon\\backend\\ECommerce.Domain\\ECommerce.Domain.csproj": {
+              "projectPath": "C:\\Users\\rawad naameh\\source\\repos\\mini-amazon\\backend\\ECommerce.Domain\\ECommerce.Domain.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
