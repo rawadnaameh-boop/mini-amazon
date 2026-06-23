@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
-using ECommerce.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

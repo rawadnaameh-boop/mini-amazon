@@ -1,5 +1,4 @@
 ﻿using ECommerce.Application.Interfaces;
-using ECommerce.Infrastructure.Persistence;
 using ECommerce.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,14 +10,12 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-
+        // MAKE SURE THIS EXACT BLOCK IS HERE:
         services.AddDbContext<AppDbContext>(options =>
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
-        services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<ICartRepository, CartRepository>();
-        services.AddScoped<IOrderRepository, OrderRepository>();
+            options.UseMySql(
+                configuration.GetConnectionString("DefaultConnection"),
+                ServerVersion.AutoDetect(configuration.GetConnectionString("DefaultConnection"))
+            ));
 
         return services;
     }
