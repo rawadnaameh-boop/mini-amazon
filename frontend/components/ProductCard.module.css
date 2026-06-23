@@ -1,0 +1,30 @@
+.card {
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.price {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.badge {
+    display: inline-block;
+    background: #cf222e;
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    width: fit-content;
+}
