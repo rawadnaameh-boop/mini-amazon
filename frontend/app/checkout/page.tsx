@@ -3,6 +3,7 @@ import { useState, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { checkout } from "@/lib/api/order";
 import { ShippingDetails } from "@/lib/types";
+import { useCart } from "@/context/CartContext";
 
 const initialState: ShippingDetails = {
   fullName: "",
@@ -17,6 +18,7 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { fetchCart } = useCart();
 
   const handleChange =
     (field: keyof ShippingDetails) => (e: ChangeEvent<HTMLInputElement>) =>
@@ -28,6 +30,7 @@ export default function CheckoutPage() {
     setError(null);
     try {
       const order = await checkout(form);
+      await fetchCart(); // sync browser cart state with the now-empty DB cart
       router.push(`/order-confirmation/${order.orderId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Checkout failed");
