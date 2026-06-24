@@ -11,16 +11,14 @@ export interface Product {
 export interface CartItem {
     productId: number;
     productName: string;
-    imageUrl: string | null;
     unitPrice: number;
     quantity: number;
-    lineTotal: number;
-    maxAvailable: number;    
+    totalItemPrice: number;
 }
 export interface Cart {
+    cartId: number;
     items: CartItem[];
-    totalAmount: number;
-
+    cartTotal: number;
 }
 
 export interface ShippingDetails {
@@ -28,5 +26,21 @@ export interface ShippingDetails {
     addressLine1: string;
     addressLine2?: string;
     city: string;
-    postalcode?:string
+    postalCode?:string;
+    country: string;
+
+}
+
+export interface OrderItemResult{
+    productId: number;
+    productName: string;
+    quantity: number;
+    unitPrice: number;
+    lineTotal: number;
+}
+export interface OrderResult{
+    orderId: number;
+    createAtUtc: string;
+    totalAmount: number;
+    items: OrderItemResult[];
 }

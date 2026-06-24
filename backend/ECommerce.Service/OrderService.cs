@@ -32,7 +32,7 @@ public class OrderService : IOrderService
         {
             ProductId = oi.ProductId,
             ProductName = oi.ProductNameSnapshot,
-            Quatity = oi.Quantity,
+            Quantity = oi.Quantity,
             UnitPrice = oi.UnitPriceSnapshot,
             LineTotal = oi.LineTotal,
         }).ToList()
