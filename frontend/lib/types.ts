@@ -1,46 +1,47 @@
 export interface Product {
-    id: number;
-    sku: string;
-    name: string;
-    description: string;
-    imageUrl: string | null;
-    price: number;
-    stockQuantity: number;
-    isInStock: boolean;
+    id: number;
+    sku: string;
+    name: string;
+    description: string;
+    imageUrl: string | null;
+    price: number;
+    stockQuantity: number;
+    isInStock: boolean;
 }
 export interface CartItem {
-    productId: number;
-    productName: string;
-    unitPrice: number;
-    quantity: number;
-    totalItemPrice: number;
+    productId: number;
+    productName: string;
+    imageUrl: string | null;
+    unitPrice: number;
+    quantity: number;
+    lineTotal: number;
+    maxAvailable: number;    
 }
 export interface Cart {
-    cartId: number;
-    items: CartItem[];
-    cartTotal: number;
+    items: CartItem[];
+    totalAmount: number;
+
 }
 
 export interface ShippingDetails {
-    fullName: string;
-    addressLine1: string;
-    addressLine2?: string;
-    city: string;
-    postalCode?:string;
-    country: string;
-
+    fullName: string;
+    addressLine1: string;
+    addressLine2?: string;
+    city: string;
+    postalcode?:string
 }
 
-export interface OrderItemResult{
+export interface OrderItem {
     productId: number;
     productName: string;
-    quantity: number;
+    quatity: number; // Tailored to match the backend DTO spelling directly
     unitPrice: number;
     lineTotal: number;
 }
-export interface OrderResult{
+
+export interface Order {
     orderId: number;
     createAtUtc: string;
     totalAmount: number;
-    items: OrderItemResult[];
+    items: OrderItem[];
 }
