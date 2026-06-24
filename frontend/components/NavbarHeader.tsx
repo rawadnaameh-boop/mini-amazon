@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import Link from "next/link"; // ✅ Added for client-side navigation
 
 export default function NavbarHeader() {
     const { cart, setDrawerOpen } = useCart();
@@ -18,9 +19,26 @@ export default function NavbarHeader() {
     return (
         <AppBar position="static" sx={{ backgroundColor: "#131921", padding: "0 10px" }}>
             <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: "bold" }}>
-                    Mini-Amazon
-                </Typography>
+                {/* Home navigation link wrapper */}
+                <Link href="/" style={{ textDecoration: "none", color: "inherit", flexGrow: 1 }}>
+                    <Typography variant="h6" component="div" sx={{ fontWeight: "bold", cursor: "pointer" }}>
+                        Mini-Amazon
+                    </Typography>
+                </Link>
+                
+                {/* ✅ ADDED: Amazon-style "Returns & Orders" Link Block */}
+                <Link href="/orders" style={{ textDecoration: "none", color: "inherit", marginRight: "20px" }}>
+                    <div style={{ 
+                        display: "flex", 
+                        flexDirection: "column", 
+                        padding: "4px 8px", 
+                        cursor: "pointer",
+                        lineHeight: "1.2"
+                    }}>
+                        <span style={{ fontSize: "11px", color: "#ccc" }}>Returns</span>
+                        <span style={{ fontSize: "14px", fontWeight: "bold", letterSpacing: "0.5px" }}>& Orders</span>
+                    </div>
+                </Link>
                 
                 <IconButton color="inherit" onClick={() => setDrawerOpen(true)}>
                     <Badge badgeContent={totalItemsCount} color="error">
