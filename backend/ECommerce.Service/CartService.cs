@@ -120,8 +120,11 @@ public class CartService : ICartService
             var product = await _productRepository.GetByIdAsync(dto.ProductId)
                 ?? throw new Exception("Product not found.");
 
+            // CRUCIAL BUSINESS LOGIC: Intercept and reject if stock is insufficient
             if (dto.Quantity > product.StockQuantity)
+            {
                 throw new InvalidOperationException("ITEM_SOLD_OUT");
+            }
 
             existingItem.Quantity = dto.Quantity;
         }

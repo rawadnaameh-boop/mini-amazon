@@ -50,6 +50,7 @@ public class CartController : ControllerBase
     }
 
     // 3. PUT: api/cart/items?userId=1
+    // Used when a user changes the quantity via the [+]/[-] controls
     [HttpPut("items")]
     public async Task<IActionResult> UpdateItem([FromQuery] int userId, [FromBody] UpdateCartItemDto dto)
     {
@@ -69,6 +70,7 @@ public class CartController : ControllerBase
     }
 
     // 4. DELETE: api/cart/items/5?userId=1
+    // Used when a user clicks "Remove"
     [HttpDelete("items/{productId:int}")]
     public async Task<IActionResult> RemoveItem([FromQuery] int userId, int productId)
     {
