@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useCart } from "@/context/CartContext"; // Fixed shortcut path
+import { useCart } from "@/context/CartContext"; 
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
