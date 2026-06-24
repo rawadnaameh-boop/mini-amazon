@@ -3,7 +3,6 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import NavbarHeader from "@/components/NavbarHeader";
 import CartDrawer from "@/components/CartDrawer";
-import ThemeRegistry from "@/components/ThemeRegistry";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,15 +22,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
-        <ThemeRegistry>
-          <CartProvider>
-            <NavbarHeader />
-            <main style={{ padding: "20px" }}>
-              {children}
-            </main>
-            <CartDrawer />
-          </CartProvider>
-        </ThemeRegistry>
+        {/* Wrapping application within the Cart engine context */}
+        <CartProvider>
+          <NavbarHeader />
+          <main style={{ padding: "20px" }}>
+            {children}
+          </main>
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );
