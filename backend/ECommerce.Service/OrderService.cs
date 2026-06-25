@@ -51,7 +51,7 @@ public class OrderService : IOrderService
         {
             ProductId = oi.ProductId,
             ProductName = oi.ProductNameSnapshot,
-            Quatity = oi.Quantity, // Maintained your DTO spelling here!
+            Quantity = oi.Quantity, // Maintained your DTO spelling here!
             UnitPrice = oi.UnitPriceSnapshot, // Pulling immutable snapshot price
             LineTotal = oi.LineTotal,
         }).ToList()

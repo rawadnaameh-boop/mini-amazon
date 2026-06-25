@@ -117,6 +117,9 @@ namespace ECommerce.Infrastructure.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Orders", null, t =>
