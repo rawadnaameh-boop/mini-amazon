@@ -29,6 +29,7 @@ export interface ShippingDetails {
     addressLine2?: string;
     city: string;
     postalcode?:string
+country: string
 }
 
 export interface OrderItem {
@@ -45,3 +46,5 @@ export interface Order {
     totalAmount: number;
     items: OrderItem[];
 }
+
+export type OrderResult = Order;

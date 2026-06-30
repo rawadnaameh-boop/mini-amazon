@@ -54,7 +54,7 @@ export default function OrderConfirmationPage() {
             }}
           >
             <span>
-              {item.productName} × {item.quantity}
+              {item.productName} × {item.quatity}
             </span>
             <span>${item.lineTotal.toFixed(2)}</span>
           </li>

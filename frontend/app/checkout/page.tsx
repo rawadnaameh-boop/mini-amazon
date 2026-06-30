@@ -10,7 +10,7 @@ const initialState: ShippingDetails = {
   addressLine1: "",
   addressLine2: "",
   city: "",
-  postalCode: "",
+  postalcode: "",
   country: "",
 };
 export default function CheckoutPage() {
@@ -78,8 +78,8 @@ export default function CheckoutPage() {
           Postal Code
           <input
             required
-            value={form.postalCode}
-            onChange={handleChange("postalCode")}
+            value={form.postalcode}
+            onChange={handleChange("postalcode")}
           />
         </label>
         <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
