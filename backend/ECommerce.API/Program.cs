@@ -19,7 +19,13 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+var mlServiceUrl = builder.Configuration["ML_SERVICE_URL"] ?? "http://localhost:8000";
 
+builder.Services.AddHttpClient("MLService", client =>
+{
+    client.BaseAddress = new Uri(mlServiceUrl);
+    client.Timeout = TimeSpan.FromSeconds(5);
+});
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
