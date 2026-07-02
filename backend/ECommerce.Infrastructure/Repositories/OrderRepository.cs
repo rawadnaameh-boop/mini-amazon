@@ -4,6 +4,9 @@ using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
 using ECommerce.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ECommerce.Infrastructure.Repositories;
 
@@ -22,14 +25,12 @@ public class OrderRepository : IOrderRepository
         if (cart is null || cart.CartItems.Count == 0)
             throw new CartEmptyException();
 
-        // 1) Create the Order, 2) move cart items -> order items (freezing price),
-        // 3) deduct inventory, 4) clear the cart - all inside one transaction.
-        // Any exception below triggers RollbackAsync, undoing every step.
         await using var transaction = await _db.Database.BeginTransactionAsync();
         try
         {
             var order = new Order
             {
+                UserId = userId, // ✅ FIXED: Now correctly binding the order to the customer!
                 ShippingFullName = shipping.FullName,
                 ShippingAddressLine1 = shipping.AddressLine1,
                 ShippingAddressLine2 = shipping.AddressLine2,
@@ -43,9 +44,6 @@ public class OrderRepository : IOrderRepository
                 if (cartItem.Product is null || !cartItem.Product.IsActive)
                     throw new ProductNotFoundException(cartItem.ProductId);
 
-                // Atomic, race-safe stock deduction. This single UPDATE statement
-                // only succeeds if StockQuantity is still >= the requested amount
-                // AT THIS EXACT MOMENT - not when the item was added to the cart.
                 var rowsAffected = await _db.Products
                     .Where(p => p.Id == cartItem.ProductId && p.StockQuantity >= cartItem.Quantity)
                     .ExecuteUpdateAsync(setters => setters
@@ -55,8 +53,7 @@ public class OrderRepository : IOrderRepository
                     throw new InsufficientStockException(
                         cartItem.ProductId, cartItem.Quantity, cartItem.Product.StockQuantity);
 
-                // Freeze price/name/SKU onto the order line so historical receipts
-                // are immune to later price changes.
+                // Freeze price/name/SKU onto the order line so historical receipts work
                 order.OrderItems.Add(new OrderItem
                 {
                     ProductId = cartItem.ProductId,
@@ -71,7 +68,6 @@ public class OrderRepository : IOrderRepository
             order.TotalAmount = order.OrderItems.Sum(oi => oi.LineTotal);
             _db.Orders.Add(order);
 
-            // Cart is transient - empty it now that its items are locked into the order.
             _db.CartItems.RemoveRange(cart.CartItems);
 
             await _db.SaveChangesAsync();
@@ -86,8 +82,17 @@ public class OrderRepository : IOrderRepository
         }
     }
 
+    // Deep-dive single order view
     public Task<Order?> GetByIdAsync(int id) =>
         _db.Orders.AsNoTracking()
            .Include(o => o.OrderItems)
            .FirstOrDefaultAsync(o => o.Id == id);
+
+    // ✅ IMPLEMENTED: Fetch full customer purchase history sorted by newest first
+    public async Task<IEnumerable<Order>> GetByUserIdAsync(int userId) =>
+        await _db.Orders.AsNoTracking()
+           .Include(o => o.OrderItems)
+           .Where(o => o.UserId == userId)
+           .OrderByDescending(o => o.Id)
+           .ToListAsync();
 }

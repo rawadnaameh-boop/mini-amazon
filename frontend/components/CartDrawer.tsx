@@ -1,11 +1,12 @@
 "use client";
 
 import React from "react";
-import { useCart } from "@/context/CartContext"; // Added missing import
-import Drawer from "@mui/material/Drawer";       // Added missing import
-import Box from "@mui/material/Box";             // Added missing import
-import Typography from "@mui/material/Typography"; // Added missing import
-import Divider from "@mui/material/Divider";     // Added missing import
+import { useRouter } from "next/navigation";
+import { useCart } from "@/context/CartContext";
+import Drawer from "@mui/material/Drawer";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -15,18 +16,22 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import Button from "@mui/material/Button";
 
 export default function CartDrawer() {
-    const { cart, isDrawerOpen, setDrawerOpen, addToCart } = useCart();
+    const { cart, isDrawerOpen, setDrawerOpen, addToCart, updateCartItem } = useCart();
+    const router = useRouter();
 
-    // Quantity controls that safely send updates directly to your C# endpoints
     const handleIncrement = async (productId: number) => {
         await addToCart(productId, 1);
     };
 
     const handleDecrement = async (productId: number, currentQty: number) => {
         if (currentQty > 1) {
-            // Sends a negative number to the backend add endpoint to decrement safely
-            await addToCart(productId, -1); 
+            await updateCartItem(productId, currentQty - 1);
         }
+    };
+
+    const handleProceedToCheckout = () => {
+        setDrawerOpen(false);
+        router.push("/checkout");
     };
 
     return (
@@ -87,7 +92,12 @@ export default function CartDrawer() {
                                 </Typography>
                             </Box>
                             
-                            <Button variant="contained" fullWidth sx={{ backgroundColor: "#FFD814", color: "#0F1111", '&:hover': { backgroundColor: "#F7CA00" }, borderRadius: "8px", fontWeight: "bold" }}>
+                            <Button
+                                variant="contained"
+                                fullWidth
+                                onClick={handleProceedToCheckout}
+                                sx={{ backgroundColor: "#FFD814", color: "#0F1111", '&:hover': { backgroundColor: "#F7CA00" }, borderRadius: "8px", fontWeight: "bold" }}
+                            >
                                 Proceed to Checkout
                             </Button>
                         </Box>

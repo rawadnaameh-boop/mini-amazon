@@ -1,39 +1,41 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Product } from "@/lib/types";
 import { useCart } from "@/context/CartContext";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 
 export default function AddToCartButton({ product }: { product: Product }) {
-    const { addToCart, errorAlert, clearError } = useCart();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const { addToCart } = useCart();
+  const handleAddToCart = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await addToCart(product.id, 1);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add to cart");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleAddToCart = async () => {
-        // Enforcing initial standard quantity increment of 1
-        await addToCart(product.id, 1); 
-    };
-
-    return (
-        <>
-            <button 
-                onClick={handleAddToCart} 
-                disabled={!product.isInStock}
-                style={{ cursor: product.isInStock ? "pointer" : "not-allowed" }}
-            >
-                {product.isInStock ? "Add to Cart" : "Out of Stock"}
-            </button>
-
-            {/* CRUCIAL ACCEPTANCE CRITERIA: Slid-in alert intercepting warehouse exhaustion */}
-            <Snackbar 
-                open={errorAlert !== null} 
-                autoHideDuration={4000} 
-                onClose={clearError}
-                anchorOrigin={{ vertical: "top", horizontal: "center" }}
-            >
-                <Alert onClose={clearError} severity="error" variant="filled" sx={{ width: '100%' }}>
-                    {errorAlert}
-                </Alert>
-            </Snackbar>
-        </>
-    );
+  return (
+    <div>
+      <button
+        onClick={handleAddToCart}
+        disabled={!product.isInStock || loading}
+      >
+        {product.isInStock
+          ? loading
+            ? "Adding..."
+            : "Add to Cart"
+          : "Out of Stock"}
+      </button>
+      {error && <p style={{ color: "crimson", fontSize: 13 }}>{error}</p>}
+    </div>
+  );
 }
