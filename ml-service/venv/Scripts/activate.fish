@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV 'C:\Users\Rita Abou Fares\source\repos\mini-amazon\ml-service\venv'
+set -gx VIRTUAL_ENV 'C:\Users\Rawad Naameh\Desktop\mini-amazon\ml-service\venv'
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"Scripts $PATH
