@@ -5,14 +5,13 @@ const API_BASE_URL = (
 ).replace(/\/$/, "")
 
 export async function getProducts(): Promise<Product[]> {
-    const res = await fetch(`${API_BASE_URL}/api/products`, { cache: "no-store" });
+    const res = await fetch(`${API_BASE_URL}/products`, { cache: "no-store" });
     if (!res.ok) {
         throw new Error(`Failed to load products (status ${res.status})`);
     }
     return res.json();
 }
 
-    const res = await fetch(`${API_BASE_URL}/api/products/${id}`, { cache: "no-store" });
 export async function getProductById(id: string): Promise<ProductDetails | null> {
     const res = await fetch(`${API_BASE_URL}/products/${id}`, { cache: "no-store" });
     if (res.status === 404) {
