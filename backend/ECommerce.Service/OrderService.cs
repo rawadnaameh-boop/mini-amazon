@@ -47,12 +47,13 @@ public class OrderService : IOrderService
         OrderId = order.Id,
         CreateAtUtc = order.CreateAtUtc,
         TotalAmount = order.TotalAmount,
+        Status = order.Status, // 👈 ADD THIS LINE
         Items = order.OrderItems.Select(oi => new OrderItemResultDto
         {
             ProductId = oi.ProductId,
             ProductName = oi.ProductNameSnapshot,
-            Quantity = oi.Quantity, // Maintained your DTO spelling here!
-            UnitPrice = oi.UnitPriceSnapshot, // Pulling immutable snapshot price
+            Quantity = oi.Quantity,
+            UnitPrice = oi.UnitPriceSnapshot,
             LineTotal = oi.LineTotal,
         }).ToList()
     };
