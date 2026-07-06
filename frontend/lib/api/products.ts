@@ -12,12 +12,9 @@ export async function getProducts(): Promise<Product[]> {
     return res.json();
 }
 
-<<<<<<< HEAD
     const res = await fetch(`${API_BASE_URL}/api/products/${id}`, { cache: "no-store" });
-=======
 export async function getProductById(id: string): Promise<ProductDetails | null> {
     const res = await fetch(`${API_BASE_URL}/products/${id}`, { cache: "no-store" });
->>>>>>> mlService_Branch
     if (res.status === 404) {
         return null;
     }
