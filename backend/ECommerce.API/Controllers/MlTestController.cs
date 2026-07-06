@@ -20,7 +20,7 @@ public class MlTestController : ControllerBase
     {
         try
         {
-            var client = _httpClientFactory.CreateClient("MlService");
+            var client = _httpClientFactory.CreateClient("MLService");
             var response = await client.GetAsync("/api/ml-health", cancellationToken);
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
             _logger.LogInformation(

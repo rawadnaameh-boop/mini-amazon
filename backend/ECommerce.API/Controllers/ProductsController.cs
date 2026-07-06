@@ -20,9 +20,20 @@ public class ProductsController : ControllerBase
 
     // GET /api/products/5
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(
+        int id,
+        CancellationToken cancellationToken)
     {
-        var product = await _productService.GetProductByIdAsync(id);
-        return product is null ? NotFound() : Ok(product);
+        var product = await _productService.GetByIdWithRecommendationsAsync(
+            id,
+            cancellationToken
+        );
+
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(product);
     }
 }

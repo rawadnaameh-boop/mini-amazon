@@ -24,7 +24,7 @@ namespace ECommerce.API.Controllers
             {
                 var client = _httpClientFactory.CreateClient("MLService");
 
-                var response = await client.GetAsync("api/ml-db-health");
+                var response = await client.GetAsync("/api/ml-health");
                 var body = await response.Content.ReadAsStringAsync();
 
                 _logger.LogInformation(

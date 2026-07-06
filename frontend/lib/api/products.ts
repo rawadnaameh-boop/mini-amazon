@@ -1,4 +1,5 @@
-import { Product } from "@/lib/types";
+import { Product, ProductDetails } from "@/lib/types";
+
 const API_BASE_URL = (
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5191/api"
 ).replace(/\/$/, "")
@@ -10,9 +11,13 @@ export async function getProducts(): Promise<Product[]> {
     }
     return res.json();
 }
-export async function getProductById(id: string): Promise<Product | null> {
 
+<<<<<<< HEAD
     const res = await fetch(`${API_BASE_URL}/api/products/${id}`, { cache: "no-store" });
+=======
+export async function getProductById(id: string): Promise<ProductDetails | null> {
+    const res = await fetch(`${API_BASE_URL}/products/${id}`, { cache: "no-store" });
+>>>>>>> mlService_Branch
     if (res.status === 404) {
         return null;
     }
