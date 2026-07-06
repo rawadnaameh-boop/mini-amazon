@@ -26,6 +26,7 @@ builder.Services.AddHttpClient("MLService", client =>
     client.BaseAddress = new Uri(mlServiceUrl);
     client.Timeout = TimeSpan.FromSeconds(5);
 });
+builder.Services.AddScoped<MlRecommendationClient>();
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
