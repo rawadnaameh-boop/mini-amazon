@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 import { CartProvider } from "@/context/CartContext";
 import NavbarHeader from "@/components/NavbarHeader";
 import CartDrawer from "@/components/CartDrawer";
@@ -22,14 +23,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
-        {/* Wrapping application within the Cart engine context */}
-        <CartProvider>
-          <NavbarHeader />
-          <main style={{ padding: "20px" }}>
-            {children}
-          </main>
-          <CartDrawer />
-        </CartProvider>
+        <AppRouterCacheProvider>
+          {/* Wrapping application within the Cart engine context */}
+          <CartProvider>
+            <NavbarHeader />
+            <main style={{ padding: "20px" }}>
+              {children}
+            </main>
+            <CartDrawer />
+          </CartProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
