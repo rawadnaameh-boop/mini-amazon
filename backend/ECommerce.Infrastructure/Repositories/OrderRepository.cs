@@ -4,8 +4,13 @@ using ECommerce.Application.Interfaces;
 using ECommerce.Domain.Entities;
 using ECommerce.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ECommerce.Infrastructure.Repositories;
@@ -13,7 +18,13 @@ namespace ECommerce.Infrastructure.Repositories;
 public class OrderRepository : IOrderRepository
 {
     private readonly AppDbContext _db;
-    public OrderRepository(AppDbContext db) => _db = db;
+    private readonly IHttpClientFactory _httpClientFactory; // 👈 1. Added for Python Communication
+
+    public OrderRepository(AppDbContext db, IHttpClientFactory httpClientFactory)
+    {
+        _db = db;
+        _httpClientFactory = httpClientFactory; // 👈 2. Injected the client factory
+    }
 
     public async Task<Order> PlaceOrderAsync(int userId, CheckoutRequestDto shipping)
     {
@@ -30,13 +41,14 @@ public class OrderRepository : IOrderRepository
         {
             var order = new Order
             {
-                UserId = userId, // ✅ FIXED: Now correctly binding the order to the customer!
+                UserId = userId,
                 ShippingFullName = shipping.FullName,
                 ShippingAddressLine1 = shipping.AddressLine1,
                 ShippingAddressLine2 = shipping.AddressLine2,
                 ShippingCity = shipping.City,
                 ShippingPostalCode = shipping.PostalCode,
                 ShippingCountry = shipping.Country,
+                Status = "Pending" // Assumes your entity has a Status string or Enum tracker
             };
 
             foreach (var cartItem in cart.CartItems)
@@ -53,7 +65,6 @@ public class OrderRepository : IOrderRepository
                     throw new InsufficientStockException(
                         cartItem.ProductId, cartItem.Quantity, cartItem.Product.StockQuantity);
 
-                // Freeze price/name/SKU onto the order line so historical receipts work
                 order.OrderItems.Add(new OrderItem
                 {
                     ProductId = cartItem.ProductId,
@@ -66,11 +77,57 @@ public class OrderRepository : IOrderRepository
             }
 
             order.TotalAmount = order.OrderItems.Sum(oi => oi.LineTotal);
-            _db.Orders.Add(order);
 
+            // =================================================================
+            // 🛡️ SECURITY CHECKPOINT: CHAT WITH PYTHON ML SERVICE
+            // =================================================================
+            try
+            {
+                // Create a managed connection channel to Python using our factory setup
+                var httpClient = _httpClientFactory.CreateClient("MLService");
+
+                // Prepare the JSON data package to match exactly what Pydantic expects
+                var currentTime = DateTime.UtcNow;
+                var checkoutPayload = new
+                {
+                    total_cost = (double)order.TotalAmount,
+                    quantity = order.OrderItems.Sum(oi => oi.Quantity),
+                    hour_of_day = currentTime.Hour + (currentTime.Minute / 60.0)
+                };
+
+                // Pause and dispatch data over local ports to FastAPI POST endpoint
+                var response = await httpClient.PostAsJsonAsync("/api/score-transaction", checkoutPayload);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Read and map the response properties dynamically
+                    var result = await response.Content.ReadFromJsonAsync<MlScoreResponse>();
+
+                    if (result != null && result.FraudScore > 0.85)
+                    {
+                        // 🚨 BUSINESS RULE TRIGGERED: Force structural state change
+                        // Note: If your Order entity uses an Enum instead of a string, change this to: OrderStatus.Flagged_For_Review
+                        order.Status = "Flagged_For_Review";
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"[SECURITY] Order intercepted! Fraud Score: {result.FraudScore}. Flagging for review.");
+                        Console.ResetColor();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Defensive fallback: If the ML Service is completely down, log the error
+                // but let the transaction continue normally so we don't lose sales.
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"[SECURITY WARNING] Could not reach ML service for verification: {ex.Message}");
+                Console.ResetColor();
+            }
+            // =================================================================
+
+            _db.Orders.Add(order);
             _db.CartItems.RemoveRange(cart.CartItems);
 
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(); // Final structural persistence write
             await transaction.CommitAsync();
 
             return order;
@@ -82,17 +139,25 @@ public class OrderRepository : IOrderRepository
         }
     }
 
-    // Deep-dive single order view
     public Task<Order?> GetByIdAsync(int id) =>
         _db.Orders.AsNoTracking()
            .Include(o => o.OrderItems)
            .FirstOrDefaultAsync(o => o.Id == id);
 
-    // ✅ IMPLEMENTED: Fetch full customer purchase history sorted by newest first
     public async Task<IEnumerable<Order>> GetByUserIdAsync(int userId) =>
         await _db.Orders.AsNoTracking()
            .Include(o => o.OrderItems)
            .Where(o => o.UserId == userId)
            .OrderByDescending(o => o.Id)
            .ToListAsync();
+
+    // Nested Helper DTO to easily unpack Python's JSON data mapping
+    private class MlScoreResponse
+    {
+        [JsonPropertyName("status")]
+        public string Status { get; set; } = string.Empty;
+
+        [JsonPropertyName("fraud_score")]
+        public double FraudScore { get; set; }
+    }
 }

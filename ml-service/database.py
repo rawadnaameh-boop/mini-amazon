@@ -1,6 +1,9 @@
 import os
 from urllib.parse import quote_plus
 from sqlalchemy import create_engine
+from dotenv import load_dotenv
+
+load_dotenv()
 
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT", "3306")

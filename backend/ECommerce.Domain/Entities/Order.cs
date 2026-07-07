@@ -12,6 +12,7 @@ public class Order
     public string? ShippingPostalCode { get; set; } = string.Empty;
     public string ShippingCountry { get; set; } = string.Empty;
     public decimal TotalAmount { get; set; }
+    public string Status { get; set; } = "Pending";
 
     public List<OrderItem> OrderItems { get; set; } = new();
 }

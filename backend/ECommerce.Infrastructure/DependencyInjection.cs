@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System;
 
 namespace ECommerce.Infrastructure;
 
@@ -21,7 +22,8 @@ public static class DependencyInjection
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
 
+        services.AddScoped<IOrderRepository, OrderRepository>();
+
         return services;
     }
 }
-

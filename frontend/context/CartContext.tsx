@@ -30,16 +30,20 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// Temporary user until authentication is added
-const MOCK_USER_ID = 1;
-
-// .env.local should contain:
-// NEXT_PUBLIC_API_BASE_URL=http://localhost:5191/api
+// .env.local configuration
 const API_BASE_URL = (
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5191/api"
 ).replace(/\/$/, "");
 
 const CART_URL = `${API_BASE_URL}/Cart`;
+
+// Dynamic helper function to safely pull active simulated profile ID
+const getActiveUserId = (): string => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("simulated_user_id") || "1";
+  }
+  return "1";
+};
 
 async function handleCartResponse(res: Response): Promise<CartResponseDto> {
   if (!res.ok) {
@@ -65,8 +69,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
 
   const fetchCart = async () => {
+    const userId = getActiveUserId();
     try {
-      const res = await fetch(`${CART_URL}?userId=${MOCK_USER_ID}`, {
+      const res = await fetch(`${CART_URL}?userId=${userId}`, {
         cache: "no-store",
       });
 
@@ -82,8 +87,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addToCart = async (productId: number, quantity: number) => {
+    const userId = getActiveUserId();
     try {
-      const res = await fetch(`${CART_URL}/add?userId=${MOCK_USER_ID}`, {
+      const res = await fetch(`${CART_URL}/add?userId=${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,8 +115,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateCartItem = async (productId: number, quantity: number) => {
+    const userId = getActiveUserId();
     try {
-      const res = await fetch(`${CART_URL}/items?userId=${MOCK_USER_ID}`, {
+      const res = await fetch(`${CART_URL}/items?userId=${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -135,9 +142,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const removeCartItem = async (productId: number) => {
+    const userId = getActiveUserId();
     try {
       const res = await fetch(
-        `${CART_URL}/items/${productId}?userId=${MOCK_USER_ID}`,
+        `${CART_URL}/items/${productId}?userId=${userId}`,
         {
           method: "DELETE",
         },

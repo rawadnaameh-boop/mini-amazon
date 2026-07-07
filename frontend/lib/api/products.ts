@@ -12,6 +12,7 @@ export async function getProducts(): Promise<Product[]> {
     return res.json();
 }
 
+    const res = await fetch(`${API_BASE_URL}/products/${'id'}`, { cache: "no-store" });
 export async function getProductById(id: string): Promise<ProductDetails | null> {
     const res = await fetch(`${API_BASE_URL}/products/${id}`, { cache: "no-store" });
     if (res.status === 404) {

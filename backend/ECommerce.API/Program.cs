@@ -2,8 +2,11 @@ using ECommerce.Infrastructure;
 using ECommerce.Infrastructure.Persistence;
 using ECommerce.Service;
 using Microsoft.EntityFrameworkCore;
+using ECommerce.API.BackgroundServices; // 🆕 Namespace for your new background worker
+
 var builder = WebApplication.CreateBuilder(args);
 const string FrontendCorsPolicy = "FrontendCors";
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -19,6 +22,7 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
 var mlServiceUrl = builder.Configuration["ML_SERVICE_URL"] ?? "http://localhost:8000";
 
 builder.Services.AddHttpClient("MLService", client =>
@@ -26,8 +30,14 @@ builder.Services.AddHttpClient("MLService", client =>
     client.BaseAddress = new Uri(mlServiceUrl);
     client.Timeout = TimeSpan.FromSeconds(5);
 });
+
 builder.Services.AddScoped<MlRecommendationClient>();
+
+// 🆕 Register your new daily customer segmentation background task here
+builder.Services.AddHostedService<CustomerTierWorker>();
+
 var app = builder.Build();
+
 using (var scope = app.Services.CreateScope())
 {
     try
@@ -40,6 +50,7 @@ using (var scope = app.Services.CreateScope())
         Console.Error.WriteLine($"[Startup] Migration failed: {ex.Message}");
     }
 }
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -48,6 +59,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(FrontendCorsPolicy);
 app.UseAuthorization();
+
 app.MapGet("/api/health", () => Results.Ok(new { status = "Healthy" }));
 app.MapControllers();
 
