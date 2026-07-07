@@ -12,7 +12,14 @@ export interface Product {
 export interface ProductDetails extends Product {
     recommendations: Product[];
 }
+export interface Review {
+    id: number;
+    productId: number;
+    text: string;
+    sentimentScore: number;
+    createdAt: string;
 
+}
 export interface CartItem {
     productId: number;
     productName: string;

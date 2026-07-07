@@ -11,5 +11,6 @@
 	public int StockQuantity { get; set; }
 
 	public bool IsActive { get; set; } = true;
-	}
+	public ICollection<Review> Reviews { get; set; } = new List<Review>();
+}
 

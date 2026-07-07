@@ -32,6 +32,7 @@ builder.Services.AddHttpClient("MLService", client =>
 });
 
 builder.Services.AddScoped<MlRecommendationClient>();
+builder.Services.AddScoped<MlSentimentClient>();
 
 // 🆕 Register your new daily customer segmentation background task here
 builder.Services.AddHostedService<CustomerTierWorker>();

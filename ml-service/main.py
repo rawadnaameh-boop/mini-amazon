@@ -1,3 +1,8 @@
+from pathlib import Path
+from dotenv import load_dotenv
+
+env_path = Path(__file__).resolve().parent / ".env"
+load_dotenv(dotenv_path=env_path)
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
@@ -10,8 +15,10 @@ from sklearn.cluster import KMeans
 
 from ml_model import calculate_fraud_score  # Imports your trained Isolation Forest brain
 from recommendation_model import RecommendationModel
-
-# NOTE: Uncomment the line below when you are ready to link your real database engine
+from pydantic import BaseModel
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from sentiment_analyzer import analyze_sentiment
+from schemas import AnalyzeReviewRequest, AnalyzeReviewResponse# NOTE: Uncomment the line below when you are ready to link your real database engine
 # from database import engine 
 
 app = FastAPI(title="Mini Amazon ML Service")
@@ -167,3 +174,9 @@ def retrain_recommendations():
     return {
         "status": "retrained"
     }
+
+@app.post("/analyze-review", response_model=AnalyzeReviewResponse)
+def analyze_review(request: AnalyzeReviewRequest):
+    score = analyze_sentiment(request.text)
+
+    return AnalyzeReviewResponse(score=score)
