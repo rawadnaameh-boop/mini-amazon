@@ -1,46 +1,24 @@
-# Python cache
 __pycache__/
-<<<<<<< HEAD
 *.pyc
 *.pyo
 *.pyd
-=======
 *.py[cod]
 *$py.class
->>>>>>> mlService_Branch
-
-# Virtual environments
 venv/
 .venv/
-<<<<<<< HEAD
-
-# Environment variables
-=======
 env/
 .env/
-
-# Environment variables / secrets
->>>>>>> mlService_Branch
 .env
 .env.*
-
-# Claude local files
-<<<<<<< HEAD
 .claude/
-=======
-.claude/
-
-# OS / editor files
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
-
 # Logs
 *.log
-
 # Python build files
 build/
 dist/
 *.egg-info/
->>>>>>> mlService_Branch
+

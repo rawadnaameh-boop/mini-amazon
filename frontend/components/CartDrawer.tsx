@@ -24,7 +24,7 @@ export default function CartDrawer() {
     };
 
     const handleDecrement = async (productId: number, currentQty: number) => {
-        if (currentQty > 1) {
+        if (currentQty >= 1) {
             await updateCartItem(productId, currentQty - 1);
         }
     };
