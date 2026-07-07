@@ -8,7 +8,7 @@ export default async function HomePage() {
         <main>
             <h1>Mini Amazon</h1>
 
-            {products.length === 0 ? (
+            {products == null || products.length === 0 ? (
                 <p>No products available right now.</p>
             ) : (
                 <div className="grid">
