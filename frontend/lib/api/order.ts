@@ -1,7 +1,7 @@
 import { OrderResult, ShippingDetails } from "@/lib/types";
 
 const API_BASE_URL = (
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5191/api"
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5191/api"
 ).replace(/\/$/, "");
 
 async function handleResponse<T>(res: Response): Promise<T> {

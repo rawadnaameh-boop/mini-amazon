@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Order } from "@/lib/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5191/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5191/api";
 
 async function getOrderDetails(id: string): Promise<Order | null> {
   const res = await fetch(`${API_BASE_URL}/orders/${id}?userId=1`, {

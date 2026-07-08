@@ -1,7 +1,7 @@
 import { Product, ProductDetails } from "@/lib/types";
 
 const API_BASE_URL = (
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5191/api"
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5191/api"
 ).replace(/\/$/, "")
 
 export async function getProducts(): Promise<Product[]> {
@@ -12,7 +12,6 @@ export async function getProducts(): Promise<Product[]> {
     return res.json();
 }
 
-    const res = await fetch(`${API_BASE_URL}/products/${'id'}`, { cache: "no-store" });
 export async function getProductById(id: string): Promise<ProductDetails | null> {
     const res = await fetch(`${API_BASE_URL}/products/${id}`, { cache: "no-store" });
     if (res.status === 404) {

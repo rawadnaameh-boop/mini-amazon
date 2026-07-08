@@ -31,13 +31,15 @@ export default function NavbarHeader() {
     const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const isMenuOpen = Boolean(anchorEl);
-
+    const API_BASE_URL = (
+        process.env.NEXT_PUBLIC_API_BASE_URL || "/api"
+    ).replace(/\/$/, "");
     useEffect(() => {
         setMounted(true);
 
         const fetchIdentities = async () => {
             try {
-                const response = await fetch("http://localhost:5191/api/Users");
+                const response = await fetch(`${API_BASE_URL}/Users`);
                 if (response.ok) {
                     const data: UserProfile[] = await response.json();
                     setUsers(data);

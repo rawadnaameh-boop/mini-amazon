@@ -32,7 +32,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 // .env.local configuration
 const API_BASE_URL = (
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5191/api"
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5191/api"
 ).replace(/\/$/, "");
 
 const CART_URL = `${API_BASE_URL}/Cart`;

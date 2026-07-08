@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Order } from "@/lib/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5191/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5191/api";
 
 // Fetch data from the secure backend endpoint using our mock user ID
 async function getOrderHistory(): Promise<Order[]> {
