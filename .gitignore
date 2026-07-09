@@ -24,3 +24,8 @@ Thumbs.db
 *.env
 ml-service/.env
 **/appsettings.Development.json
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

@@ -1,0 +1,205 @@
+[
+  {
+    "productId": 9,
+    "name": "\"The Last Lighthouse\" Novel",
+    "price": 14.99,
+    "stockQuantity": 71,
+    "imageUrl": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 17,
+    "name": "10-Inch Android Tablet",
+    "price": 119.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1585790050230-5dd28404ccb9?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 3,
+    "name": "12-Cup Programmable Coffee Maker",
+    "price": 45.5,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 7,
+    "name": "15-Piece Kitchen Knife Set",
+    "price": 54.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1593618998160-e34014e67546?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 11,
+    "name": "20000mAh Portable Power Bank",
+    "price": 29.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 10,
+    "name": "500-Piece Building Block Set",
+    "price": 34.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 13,
+    "name": "50ft Expandable Garden Hose",
+    "price": 32.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 6,
+    "name": "Adjustable Dumbbell Set 20lb",
+    "price": 79.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 21,
+    "name": "Adjustable Laptop Stand",
+    "price": 27.99,
+    "stockQuantity": 13,
+    "imageUrl": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 34,
+    "name": "Cat Tree Scratching Tower",
+    "price": 74.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1545249390-6bdfa286032f?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 28,
+    "name": "Ceramic Dinnerware Set",
+    "price": 59.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1603199506016-b9a594b593c0?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 12,
+    "name": "Cordless Stick Vacuum Cleaner",
+    "price": 129.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 33,
+    "name": "Daily Skincare Gift Set",
+    "price": 36.99,
+    "stockQuantity": 11,
+    "imageUrl": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 19,
+    "name": "Ergonomic Wireless Mouse",
+    "price": 19.99,
+    "stockQuantity": 25,
+    "imageUrl": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 31,
+    "name": "Everyday Running Sneakers",
+    "price": 64.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 20,
+    "name": "Full HD Webcam",
+    "price": 34.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1640955011254-39734e60b16f?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 23,
+    "name": "Hardcover Notebook Set",
+    "price": 12.99,
+    "stockQuantity": 41,
+    "imageUrl": "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 4,
+    "name": "High-Speed Countertop Blender",
+    "price": 69.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 27,
+    "name": "Insulated Stainless Steel Water Bottle",
+    "price": 18.99,
+    "stockQuantity": 30,
+    "imageUrl": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 22,
+    "name": "LED Desk Lamp",
+    "price": 22.5,
+    "stockQuantity": 17,
+    "imageUrl": "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 16,
+    "name": "Noise Cancelling Wireless Earbuds",
+    "price": 39.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 14,
+    "name": "Orthopedic Dog Bed (Large)",
+    "price": 49.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 35,
+    "name": "Remote Control Racing Car",
+    "price": 44.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1594787318286-3d835c1d207f?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 18,
+    "name": "RGB Mechanical Keyboard",
+    "price": 49.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 2,
+    "name": "Smart Fitness Watch",
+    "price": 89.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 24,
+    "name": "Soft Microfiber Bed Sheet Set",
+    "price": 31.99,
+    "stockQuantity": 9,
+    "imageUrl": "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 29,
+    "name": "Two-Slice Toaster",
+    "price": 24.99,
+    "stockQuantity": 12,
+    "imageUrl": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 30,
+    "name": "Water-Resistant Laptop Backpack",
+    "price": 42.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+  },
+  {
+    "productId": 1,
+    "name": "Wireless Bluetooth Headphones",
+    "price": 59.99,
+    "stockQuantity": 0,
+    "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop"
+  }
+]

@@ -32,3 +32,8 @@ watchfiles==1.2.0
 websockets==16.0
 vaderSentiment
 boto3
+torch
+torchvision
+pillow
+python-multipart
+requests

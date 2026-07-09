@@ -15,7 +15,7 @@ import boto3
 import pandas as pd
 import numpy as np
 
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
@@ -27,7 +27,10 @@ from ml_model import calculate_fraud_score
 from recommendation_model import RecommendationModel
 from sentiment_analyzer import analyze_sentiment
 from schemas import AnalyzeReviewRequest, AnalyzeReviewResponse
+from PIL import Image
+from sklearn.metrics.pairwise import cosine_similarity
 
+from visual_search import extract_embedding
 
 print("MAIN.PY LOADED - SQS VERSION", flush=True)
 
@@ -104,7 +107,14 @@ except Exception as ex:
 app = FastAPI(title="Mini Amazon ML Service")
 
 recommendation_model = RecommendationModel()
+# ==========================================
+# VISUAL SEARCH CONFIGURATION
+# ==========================================
 
+BASE_DIR = Path(__file__).resolve().parent
+
+VISUAL_EMBEDDINGS_PATH = BASE_DIR / "embeddings" / "product_embeddings.npy"
+VISUAL_METADATA_PATH = BASE_DIR / "embeddings" / "product_metadata.json"
 
 # ==========================================
 # TRANSACTION PAYLOAD SCHEMA
@@ -554,7 +564,9 @@ def ml_health():
         "status": "running",
         "service": "mini-amazon-ml-service",
         "sqs_configured": bool(SQS_QUEUE_URL),
-        "db_configured": engine is not None
+        "db_configured": engine is not None,
+        "visual_embeddings_file_exists": VISUAL_EMBEDDINGS_PATH.exists(),
+        "visual_metadata_file_exists": VISUAL_METADATA_PATH.exists()
     }
 
 
@@ -590,3 +602,87 @@ def analyze_review(request: AnalyzeReviewRequest):
     score = analyze_sentiment(request.text)
 
     return AnalyzeReviewResponse(score=score)
+# ==========================================
+# 7. VISUAL SEARCH ENDPOINT
+# ==========================================
+
+@app.post("/visual-search")
+async def visual_search(file: UploadFile = File(...)):
+    try:
+        if not file.content_type or not file.content_type.startswith("image/"):
+            raise HTTPException(
+                status_code=400,
+                detail="Uploaded file must be an image."
+            )
+
+        if not VISUAL_EMBEDDINGS_PATH.exists():
+            raise HTTPException(
+                status_code=500,
+                detail="Product embeddings file not found. Run index_product_images.py first."
+            )
+
+        if not VISUAL_METADATA_PATH.exists():
+            raise HTTPException(
+                status_code=500,
+                detail="Product metadata file not found. Run index_product_images.py first."
+            )
+
+        image = Image.open(file.file).convert("RGB")
+
+        query_embedding = extract_embedding(image)
+
+        product_embeddings = np.load(VISUAL_EMBEDDINGS_PATH)
+
+        with open(VISUAL_METADATA_PATH, "r", encoding="utf-8") as metadata_file:
+            product_metadata = json.load(metadata_file)
+
+        if len(product_embeddings) == 0 or len(product_metadata) == 0:
+            raise HTTPException(
+                status_code=500,
+                detail="Visual search index is empty. Run index_product_images.py again."
+            )
+
+        if len(product_embeddings) != len(product_metadata):
+            raise HTTPException(
+                status_code=500,
+                detail="Embeddings and metadata count mismatch. Re-run index_product_images.py."
+            )
+
+        similarities = cosine_similarity(
+            query_embedding.reshape(1, -1),
+            product_embeddings
+        )[0]
+
+        top_k = min(5, len(similarities))
+        top_indices = similarities.argsort()[::-1][:top_k]
+
+        results = []
+
+        for index in top_indices:
+            product = product_metadata[index]
+
+            results.append({
+                "productId": product.get("productId"),
+                "name": product.get("name"),
+                "price": product.get("price"),
+                "stockQuantity": product.get("stockQuantity"),
+                "imageUrl": product.get("imageUrl"),
+                "similarity": float(similarities[index])
+            })
+
+        return {
+            "status": "success",
+            "results": results
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as ex:
+        return JSONResponse(
+            status_code=500,
+            content={
+                "status": "error",
+                "message": f"Visual search failed: {str(ex)}"
+            }
+        )
