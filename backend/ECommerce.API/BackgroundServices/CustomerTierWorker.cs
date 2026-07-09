@@ -29,25 +29,22 @@ public class CustomerTierWorker : BackgroundService
 
             try
             {
-                // 1. Leverage your existing named HTTP client setup
                 var client = _httpClientFactory.CreateClient("MLService");
 
-                // 2. Fetch the segments from the FastAPI endpoint
-                var segments = await client.GetFromJsonAsync<List<CustomerSegmentDto>>(
+                // 🆕 1. Fetch using the new wrapper DTO instead of a raw List
+                var response = await client.GetFromJsonAsync<MlCustomerSegmentResponseDto>(
                     "customer-segments", stoppingToken);
 
-                if (segments != null && segments.Any())
+                // 🆕 2. Read the elements out of the response data list
+                if (response != null && response.Status == "success" && response.Data.Any())
                 {
-                    // 3. Create a scope to securely use your AppDbContext
                     using var scope = _scopeFactory.CreateScope();
                     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                    _logger.LogInformation("[AI-Sync] Processing {Count} profiles from ML service.", segments.Count);
+                    _logger.LogInformation("[AI-Sync] Processing {Count} profiles from ML service.", response.Data.Count);
 
-                    // 4. Update matching users in your MySQL database
-                    foreach (var segment in segments)
+                    foreach (var segment in response.Data)
                     {
-                        // Safely parse string "user_42" into integer 42 to match your DB schema
                         string cleanId = segment.UserId.Replace("user_", "");
                         if (int.TryParse(cleanId, out int numericId))
                         {
@@ -59,7 +56,6 @@ public class CustomerTierWorker : BackgroundService
                         }
                     }
 
-                    // 5. Commit updates
                     await dbContext.SaveChangesAsync(stoppingToken);
                     _logger.LogInformation("[AI-Sync] Database successfully synchronized with behavioral tiers.");
                 }
@@ -69,7 +65,6 @@ public class CustomerTierWorker : BackgroundService
                 _logger.LogError(ex, "[AI-Sync] Error occurred while running background tier updates.");
             }
 
-            // 6. Sleep for 24 hours before calculating customer groups again
             _logger.LogInformation("[AI-Sync] Pipeline complete. Sleeping for 24 hours.");
             await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
         }

@@ -25,17 +25,28 @@ builder.Services.AddCors(options =>
 
 var mlServiceUrl = builder.Configuration["ML_SERVICE_URL"] ?? "http://localhost:8000";
 
+// Existing Named Client
 builder.Services.AddHttpClient("MLService", client =>
 {
     client.BaseAddress = new Uri(mlServiceUrl);
     client.Timeout = TimeSpan.FromSeconds(5);
 });
 
+// 🆕 Typed Client Registration for the Dynamic Pricing Worker
+builder.Services.AddHttpClient<PricingBackgroundWorker>(client =>
+{
+    client.BaseAddress = new Uri(mlServiceUrl);
+    client.Timeout = TimeSpan.FromSeconds(10); // Pricing logic gets a bit more breathing room
+});
+
 builder.Services.AddScoped<MlRecommendationClient>();
 builder.Services.AddScoped<MlSentimentClient>();
 
-// 🆕 Register your new daily customer segmentation background task here
+// Existing Background Task
 builder.Services.AddHostedService<CustomerTierWorker>();
+
+// 🆕 Register your new Dynamic Pricing Background Worker
+builder.Services.AddHostedService<PricingBackgroundWorker>();
 
 var app = builder.Build();
 
