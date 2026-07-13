@@ -158,7 +158,7 @@ export default function NavbarHeader() {
             component="div"
             sx={{ fontWeight: "bold", cursor: "pointer" }}
           >
-            Mini-Amazon
+            Mini Amazon
           </Typography>
         </Link>
 
