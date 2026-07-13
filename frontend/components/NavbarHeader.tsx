@@ -119,7 +119,7 @@ export default function NavbarHeader() {
             fontFamily: "sans-serif",
           }}
         >
-          Mini-Amazon
+          Mini Amazon
         </span>
       </header>
     );
@@ -145,54 +145,65 @@ export default function NavbarHeader() {
           </Typography>
         </Link> */}
         {/* Brand Navigation Header */}
-<Link href="/" style={{ textDecoration: "none", color: "inherit", marginRight: "20px" }}>
-    <Typography variant="h6" component="div" sx={{ fontWeight: "bold", cursor: "pointer" }}>
-        Mini-Amazon
-    </Typography>
-</Link>
+        <Link
+          href="/"
+          style={{
+            textDecoration: "none",
+            color: "inherit",
+            marginRight: "20px",
+          }}
+        >
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ fontWeight: "bold", cursor: "pointer" }}
+          >
+            Mini-Amazon
+          </Typography>
+        </Link>
 
-{/* Product Name Search Bar */}
-<Box
-    component="form"
-    onSubmit={handleSearchSubmit}
-    sx={{
-        display: "flex",
-        alignItems: "center",
-        flexGrow: 1,
-        maxWidth: "520px",
-        backgroundColor: "#fff",
-        borderRadius: "4px",
-        overflow: "hidden",
-        marginRight: "20px",
-        height: "40px"
-    }}
->
-    <InputBase
-        placeholder="Search products by name..."
-        value={searchTerm}
-        onChange={(event) => setSearchTerm(event.target.value)}
-        sx={{
-            flex: 1,
-            paddingLeft: "12px",
-            color: "#111"
-        }}
-    />
-
-    <IconButton
-        type="submit"
-        sx={{
-            backgroundColor: "#febd69",
-            borderRadius: 0,
+        {/* Product Name Search Bar */}
+        <Box
+          component="form"
+          onSubmit={handleSearchSubmit}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexGrow: 1,
+            maxWidth: "520px",
+            backgroundColor: "#fff",
+            borderRadius: "4px",
+            overflow: "hidden",
+            marginRight: "20px",
             height: "40px",
-            width: "48px",
-            "&:hover": {
-                backgroundColor: "#f3a847"
-            }
-        }}
-    >
-        <SearchIcon sx={{ color: "#111" }} />
-    </IconButton>
-</Box>
+          }}
+        >
+          <InputBase
+            placeholder="Search products by name..."
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            sx={{
+              flex: 1,
+              paddingLeft: "12px",
+              color: "#111",
+            }}
+          />
+
+          <IconButton
+            type="submit"
+            sx={{
+              backgroundColor: "#febd69",
+              borderRadius: 0,
+              height: "40px",
+              width: "48px",
+              "&:hover": {
+                backgroundColor: "#f3a847",
+              },
+            }}
+          >
+            <SearchIcon sx={{ color: "#111" }} />
+          </IconButton>
+        </Box>
         {/* Visual Product Search Upload */}
         <Box
           sx={{
