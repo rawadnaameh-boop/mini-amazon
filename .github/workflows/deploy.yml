@@ -1,14 +1,16 @@
-name: Build and Push to Amazon ECR
+name: Build, Push to ECR, and Deploy to ECS Fargate
 
 on:
   push:
     branches:
-      - main # This tells GitHub to run the script every time you push to main
+      - main
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
-  # --------------------------------------------------------
-  # JOB 1: Build & Push Frontend (Next.js)
-  # --------------------------------------------------------
+  # 1. Build Frontend Image
   build-frontend:
     runs-on: ubuntu-latest
     steps:
@@ -26,7 +28,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, Tag, and Push Frontend Image
+      - name: Build and Push Frontend
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.ECR_FRONTEND_REPO }}
@@ -37,13 +39,10 @@ jobs:
             --build-arg NEXT_PUBLIC_API_BASE_URL="http://mini-amazon-alb-215385300.eu-north-1.elb.amazonaws.com/api" \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-          
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-  # --------------------------------------------------------
-  # JOB 2: Build & Push Backend (.NET 10)
-  # --------------------------------------------------------
+  # 2. Build Backend Image
   build-backend:
     runs-on: ubuntu-latest
     steps:
@@ -61,23 +60,18 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, Tag, and Push Backend Image
+      - name: Build and Push Backend
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.ECR_BACKEND_REPO }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
           cd backend
-          docker build \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-          
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-  # --------------------------------------------------------
-  # JOB 3: Build & Push ML Service (Python)
-  # --------------------------------------------------------
+  # 3. Build ML Image
   build-ml:
     runs-on: ubuntu-latest
     steps:
@@ -95,16 +89,33 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, Tag, and Push ML Image
+      - name: Build and Push ML
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.ECR_ML_REPO }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
           cd ml-service
-          docker build \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-          
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+  # 4. Trigger ECS Deployments (Runs ONLY after all builds succeed)
+  deploy-to-ecs:
+    runs-on: ubuntu-latest
+    needs: [build-frontend, build-backend, build-ml]
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy Frontend Service
+        run: |
+          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.ECS_FRONTEND_SERVICE }} --force-new-deployment
+
+      - name: Deploy Backend Service (Updates both Backend & ML Containers)
+        run: |
+          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.ECS_BACKEND_SERVICE }} --force-new-deployment
