@@ -2,13 +2,7 @@ using ECommerce.Application.DTOs;
 using ECommerce.Application.Exceptions;
 using ECommerce.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration; 
-using System;
 using System.Threading.Tasks;
-using System.Text.Json;                 
-using Amazon;                         
-using Amazon.SQS;                      
-using Amazon.SQS.Model;                
 
 namespace ECommerce.API.Controllers;
 
@@ -17,12 +11,10 @@ namespace ECommerce.API.Controllers;
 public class OrdersController : ControllerBase
 {
     private readonly IOrderService _orderService;
-    private readonly IConfiguration _configuration; 
 
-    public OrdersController(IOrderService orderService, IConfiguration configuration)
+    public OrdersController(IOrderService orderService)
     {
         _orderService = orderService;
-        _configuration = configuration;
     }
 
     [HttpPost("checkout")]
@@ -30,46 +22,9 @@ public class OrdersController : ControllerBase
     {
         try
         {
-            var order = await _orderService.CheckoutAsync(userId, request);
+            var order = await _orderService.CheckoutAsync(userId, request);
 
-            
-            try
-            {
-                
-                var awsConfig = _configuration.GetSection("AWS");
-                var awsAccessKey = awsConfig["AccessKey"];
-                var awsSecretKey = awsConfig["SecretKey"];
-                var region = RegionEndpoint.GetBySystemName(awsConfig["Region"]);
-                var queueUrl = awsConfig["QueueUrl"];
-
-               
-                var sqsClient = new AmazonSQSClient(awsAccessKey, awsSecretKey, region);
-
-             
-                var queuePayload = new
-                {
-                    UserId = userId,
-                    TriggerTime = DateTime.UtcNow
-                };
-                string messageBody = JsonSerializer.Serialize(queuePayload);
-
-                var sendMessageRequest = new SendMessageRequest
-                {
-                    QueueUrl = queueUrl,
-                    MessageBody = messageBody
-                };
-
-                await sqsClient.SendMessageAsync(sendMessageRequest);
-                Console.WriteLine($":email: SQS Event Logged: Order placed successfully. Sent execution notice for User ID {userId} down the pipeline.");
-            }
-            catch (Exception ex)
-            {
-               
-                Console.WriteLine($":warning: SQS Background Dispatcher Failure: {ex.Message}");
-            }
-
-          
-            return CreatedAtAction(nameof(GetById), new { id = order.OrderId, userId = userId }, order);
+            return CreatedAtAction(nameof(GetById), new { id = order.OrderId, userId = userId }, order);
         }
         catch (CartEmptyException ex) { return BadRequest(new { message = ex.Message }); }
         catch (ProductNotFoundException ex) { return NotFound(new { message = ex.Message }); }

@@ -11,7 +11,6 @@ import threading
 import urllib.parse
 from datetime import datetime, timedelta
 
-import boto3
 import pandas as pd
 import numpy as np
 
@@ -34,7 +33,7 @@ from pricing_model import DynamicPricingModel
 
 from visual_search import extract_embedding
 
-print("MAIN.PY LOADED - SQS + DYNAMIC PRICING VERSION", flush=True)
+print("MAIN.PY LOADED - DYNAMIC PRICING VERSION", flush=True)
 
 
 # ==========================================
@@ -42,15 +41,10 @@ print("MAIN.PY LOADED - SQS + DYNAMIC PRICING VERSION", flush=True)
 # ==========================================
 
 DB_USER = os.getenv("DB_USER", "admin")
-DB_PASS = os.getenv("DB_PASS", "")
+DB_PASS = os.getenv("DB_PASSWORD", "")
 DB_HOST = os.getenv("DB_HOST", "")
 DB_PORT = os.getenv("DB_PORT", "3306")
 DB_NAME = os.getenv("DB_NAME", "miniamazon_db")
-
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = os.getenv("AWS_REGION", "eu-north-1")
-SQS_QUEUE_URL = os.getenv("SQS_QUEUE_URL")
 
 
 # ==========================================
@@ -76,30 +70,6 @@ try:
 except Exception as ex:
     engine = None
     print(f"Database engine initialization failed: {ex}", flush=True)
-
-
-# ==========================================
-# AWS SQS CLIENT
-# ==========================================
-
-sqs_client = None
-
-try:
-    sqs_config = {
-        "region_name": AWS_REGION
-    }
-
-    if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
-        sqs_config["aws_access_key_id"] = AWS_ACCESS_KEY_ID
-        sqs_config["aws_secret_access_key"] = AWS_SECRET_ACCESS_KEY
-
-    sqs_client = boto3.client("sqs", **sqs_config)
-
-    print("AWS SQS client initialized successfully.", flush=True)
-
-except Exception as ex:
-    sqs_client = None
-    print(f"AWS SQS client initialization failed: {ex}", flush=True)
 
 
 # ==========================================
@@ -311,8 +281,8 @@ def fetch_live_order_data() -> pd.DataFrame:
 
 def execute_rfm_pipeline(triggered_by_user_id=None):
     """
-    Runs after an OrderPlaced SQS message arrives.
     Reads Orders, calculates user tiers, and updates Users table.
+    Triggered manually via POST /api/run-rfm.
     """
     print(
         f"RFM pipeline triggered by UserId: {triggered_by_user_id}",
@@ -395,93 +365,6 @@ def execute_rfm_pipeline(triggered_by_user_id=None):
 
 
 # ==========================================
-# SQS LISTENER
-# ==========================================
-
-def extract_user_id_from_sqs_body(raw_body: str):
-    """
-    Extracts UserId from the SQS message body.
-    Supports UserId, userId, and user_id.
-    """
-    body = json.loads(raw_body)
-
-    if isinstance(body, str):
-        body = json.loads(body)
-
-    if "Message" in body:
-        try:
-            body = json.loads(body["Message"])
-        except Exception:
-            pass
-
-    return (
-        body.get("UserId")
-        or body.get("userId")
-        or body.get("user_id")
-    )
-
-
-def start_sqs_listener():
-    """
-    Background daemon that constantly polls SQS.
-    """
-    print("SQS listener function entered.", flush=True)
-
-    if sqs_client is None:
-        print("SQS listener stopped: sqs_client is not available.", flush=True)
-        return
-
-    if not SQS_QUEUE_URL:
-        print("SQS listener stopped: SQS_QUEUE_URL is missing in .env.", flush=True)
-        return
-
-    if "YOUR_" in SQS_QUEUE_URL or "PUT_" in SQS_QUEUE_URL:
-        print("SQS listener stopped: SQS_QUEUE_URL is still a placeholder.", flush=True)
-        return
-
-    print("SQS listener is now polling AWS SQS...", flush=True)
-
-    while True:
-        try:
-            response = sqs_client.receive_message(
-                QueueUrl=SQS_QUEUE_URL,
-                AttributeNames=["All"],
-                MaxNumberOfMessages=1,
-                WaitTimeSeconds=10
-            )
-
-            messages = response.get("Messages", [])
-
-            for message in messages:
-                print("SQS message received.", flush=True)
-
-                try:
-                    incoming_user_id = extract_user_id_from_sqs_body(message["Body"])
-
-                    if incoming_user_id is not None:
-                        execute_rfm_pipeline(triggered_by_user_id=incoming_user_id)
-                    else:
-                        print("SQS message skipped: UserId not found.", flush=True)
-
-                    sqs_client.delete_message(
-                        QueueUrl=SQS_QUEUE_URL,
-                        ReceiptHandle=message["ReceiptHandle"]
-                    )
-
-                    print("SQS message deleted from queue.", flush=True)
-
-                except Exception as message_error:
-                    print(
-                        f"Failed to process one SQS message: {message_error}",
-                        flush=True
-                    )
-
-        except Exception as ex:
-            print(f"SQS listener error. Retrying in 5 seconds: {ex}", flush=True)
-            time.sleep(5)
-
-
-# ==========================================
 # STARTUP EVENT
 # ==========================================
 
@@ -502,11 +385,6 @@ def startup_event():
         print("Dynamic pricing model trained successfully.", flush=True)
     except Exception as ex:
         print(f"Dynamic pricing model training failed: {ex}", flush=True)
-
-    # Start SQS Background Thread
-    thread = threading.Thread(target=start_sqs_listener, daemon=True)
-    thread.start()
-    print("SQS background thread started.", flush=True)
 
     # Start Competitor Pricing Background Simulator Thread
     competitor_thread = threading.Thread(target=start_competitor_simulator, daemon=True)
@@ -560,14 +438,14 @@ def get_customer_segments():
         rfm = build_rfm_segments(df_orders)
 
         if rfm.empty:
-            return {"status": "success", "source": source, "segments": []}
+            return {"status": "success", "source": source, "data": []}
 
         rfm_output = rfm.reset_index()[["UserId", "Tier"]]
 
         return {
             "status": "success",
             "source": source,
-            "segments": rfm_output.to_dict(orient="records")
+            "data": rfm_output.to_dict(orient="records")
         }
 
     except Exception as ex:
@@ -603,7 +481,6 @@ def ml_health():
     return {
         "status": "running",
         "service": "mini-amazon-ml-service",
-        "sqs_configured": bool(SQS_QUEUE_URL),
         "db_configured": engine is not None,
         "visual_embeddings_file_exists": VISUAL_EMBEDDINGS_PATH.exists(),
         "visual_metadata_file_exists": VISUAL_METADATA_PATH.exists()
